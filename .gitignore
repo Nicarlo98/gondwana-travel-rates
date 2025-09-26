@@ -1,0 +1,29 @@
+# Environment Variables
+.env
+
+# PHP Dependencies
+backend/vendor/
+backend/composer.lock
+
+# Node.js Dependencies
+frontend/node_modules/
+frontend/package-lock.json
+
+# Build Outputs
+frontend/dist/
+
+# Debug and Development Scripts
+debug-api.php
+test-api.ps1
+restart-backend.ps1
+
+# IDE files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
