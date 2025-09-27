@@ -58,18 +58,18 @@ function App() {
     setError(null)
   }
 
-  const testConnection = async () => {
-    try {
-      console.log('Testing backend connection...')
-      const response = await fetch('http://localhost:8000/api/test.php')
-      const data = await response.json()
-      console.log('Connection test successful:', data)
-      alert('Backend connection successful!')
-    } catch (err) {
-      console.error('Connection test failed:', err)
-      alert('Backend connection failed: ' + err.message)
-    }
-  }
+  // const testConnection = async () => {
+  //   try {
+  //     console.log('Testing backend connection...')
+  //     const response = await fetch('http://localhost:8000/api/test.php')
+  //     const data = await response.json()
+  //     console.log('Connection test successful:', data)
+  //     alert('Backend connection successful!')
+  //   } catch (err) {
+  //     console.error('Connection test failed:', err)
+  //     alert('Backend connection failed: ' + err.message)
+  //   }
+  // }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
