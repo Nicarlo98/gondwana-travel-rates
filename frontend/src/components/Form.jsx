@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const Form = ({ onSubmit, loading, onReset }) => {
   const [formData, setFormData] = useState({
@@ -10,12 +10,49 @@ const Form = ({ onSubmit, loading, onReset }) => {
   })
 
   const [errors, setErrors] = useState({})
+  const [unitNames, setUnitNames] = useState([
+    'Kalahari Farmhouse',
+    'Deluxe Suite', 
+    'Standard Room',
+    'Family Room',
+    'Executive Suite',
+    'Presidential Suite',
+    'Safari Lodge',
+    'Desert Camp',
+    'Luxury Tent',
+    'Conference Room',
+    'Camping Site',
+    'Chalet',
+    'Villa',
+    'Cottage',
+    'Bungalow'
+  ])
+
+  // Optionally fetch unit names from API
+  useEffect(() => {
+    const fetchUnitNames = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/units.php')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.units && Array.isArray(data.units)) {
+            setUnitNames(data.units.map(unit => unit.name))
+          }
+        }
+      } catch (error) {
+        // Fallback to hardcoded list if API fails
+        console.log('Using fallback unit names')
+      }
+    }
+
+    fetchUnitNames()
+  }, [])
 
   const validateForm = () => {
     const newErrors = {}
 
     if (!formData['Unit Name'].trim()) {
-      newErrors['Unit Name'] = 'Unit name is required'
+      newErrors['Unit Name'] = 'Please select a unit type'
     }
 
     if (!formData['Arrival']) {
@@ -131,13 +168,24 @@ const Form = ({ onSubmit, loading, onReset }) => {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Unit Name
           </label>
-          <input
-            type="text"
-            className={`input-field ${errors['Unit Name'] ? 'border-red-500' : ''}`}
-            value={formData['Unit Name']}
-            onChange={(e) => setFormData({...formData, 'Unit Name': e.target.value})}
-            placeholder="e.g., Deluxe Suite, Standard Room"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              className={`input-field ${errors['Unit Name'] ? 'border-red-500' : ''}`}
+              value={formData['Unit Name']}
+              onChange={(e) => setFormData({...formData, 'Unit Name': e.target.value})}
+              placeholder="Enter unit name (e.g., Deluxe Suite, Standard Room)"
+              list="unit-suggestions"
+            />
+            <datalist id="unit-suggestions">
+              {unitNames.map((unitName, index) => (
+                <option key={index} value={unitName} />
+              ))}
+            </datalist>
+          </div>
+          <div className="mt-1 text-xs text-gray-500">
+            💡 Start typing to see suggestions. Try "Kalahari Farmhouse" or "Standard Room"
+          </div>
           {errors['Unit Name'] && (
             <p className="text-red-500 text-sm mt-1">{errors['Unit Name']}</p>
           )}

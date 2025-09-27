@@ -21,6 +21,10 @@
     @apply w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 backdrop-blur-sm transition-all duration-200 hover:bg-white;
   }
   
+  .input-field select {
+    @apply cursor-pointer;
+  }
+  
   .card {
     @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8;
   }

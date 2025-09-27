@@ -47,7 +47,7 @@ class RatesService
         $remoteResponse = $this->callRemoteApi($transformedPayload);
 
         // Transform response back to our format
-        return $this->transformResponse($requestData, $remoteResponse);
+        return $this->transformResponse($requestData, $remoteResponse, $transformedPayload);
     }
 
     /**
@@ -125,7 +125,8 @@ class RatesService
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json'
-                ]
+                ],
+                'verify' => filter_var($_ENV['SSL_VERIFY'] ?? 'true', FILTER_VALIDATE_BOOLEAN)
             ]);
 
             $responseBody = $response->getBody()->getContents();
@@ -175,14 +176,54 @@ class RatesService
      * 
      * @param array $originalRequest The original request data
      * @param array $remoteResponse The remote API response
+     * @param array $transformedPayload The payload sent to remote API
      * @return array Our formatted response
      */
-    private function transformResponse(array $originalRequest, array $remoteResponse): array
+    private function transformResponse(array $originalRequest, array $remoteResponse, array $transformedPayload): array
     {
         // Extract rate and availability from remote response
-        // Note: This is a simplified implementation - adjust based on actual API response structure
-        $rate = $remoteResponse['rate'] ?? $remoteResponse['Rate'] ?? 0;
-        $availability = $remoteResponse['available'] ?? $remoteResponse['Availability'] ?? true;
+        // Gondwana API uses 'Total Charge' field and values are in cents, so divide by 100
+        $totalCharge = $remoteResponse['Total Charge'] ?? 0;
+        $rate = $totalCharge / 100; // Convert from cents to dollars
+        
+        // Determine availability based on Gondwana API response patterns
+        $availability = false;
+        
+        // Primary indicator: Total charge > 0 means available
+        if ($totalCharge > 0) {
+            $availability = true;
+        }
+        
+        // Secondary check: Rooms available > 0 indicates availability
+        $roomsAvailable = $remoteResponse['Rooms'] ?? 0;
+        if ($roomsAvailable > 0) {
+            $availability = true;
+        }
+        
+        // Tertiary check: Valid legs with charges
+        if (isset($remoteResponse['Legs']) && !empty($remoteResponse['Legs'])) {
+            foreach ($remoteResponse['Legs'] as $leg) {
+                $legCharge = $leg['Total Charge'] ?? 0;
+                if ($legCharge > 0) {
+                    $availability = true;
+                    break;
+                }
+            }
+        }
+        
+        // Final validation: If we calculated a rate > 0, it should be available
+        if ($rate > 0) {
+            $availability = true;
+        }
+        
+        // If no Total Charge but we have legs, sum up the leg charges
+        if ($rate == 0 && isset($remoteResponse['Legs']) && is_array($remoteResponse['Legs'])) {
+            $totalFromLegs = 0;
+            foreach ($remoteResponse['Legs'] as $leg) {
+                $totalFromLegs += $leg['Total Charge'] ?? 0;
+            }
+            $rate = $totalFromLegs / 100; // Convert from cents to dollars
+        }
 
         // Format date range
         $arrivalDate = \DateTime::createFromFormat('d/m/Y', $originalRequest['Arrival']);

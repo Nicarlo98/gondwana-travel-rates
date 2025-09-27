@@ -117,8 +117,13 @@ const Result = ({ result, error, loading }) => {
               <span className="text-4xl font-bold text-green-600">
                 ${result.Rate?.toFixed(2) || '0.00'}
               </span>
-              <span className="text-gray-500 ml-2">per stay</span>
+              <span className="text-gray-500 ml-2">total cost</span>
             </div>
+            {result.Rate > 0 && (
+              <p className="text-sm text-gray-600 mt-1">
+                Includes all guests for the entire stay period
+              </p>
+            )}
           </div>
 
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
@@ -131,9 +136,9 @@ const Result = ({ result, error, loading }) => {
             <p className="text-lg font-medium text-gray-800">{result['Date Range']}</p>
           </div>
 
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-100">
+          <div className={`bg-gradient-to-r rounded-xl p-6 border ${result.Availability ? 'from-green-50 to-emerald-50 border-green-100' : 'from-red-50 to-pink-50 border-red-100'}`}>
             <div className="flex items-center mb-3">
-              <svg className="w-5 h-5 text-amber-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-5 h-5 mr-2 ${result.Availability ? 'text-green-600' : 'text-red-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <h3 className="font-semibold text-gray-900">Availability</h3>
@@ -151,6 +156,16 @@ const Result = ({ result, error, loading }) => {
                 </>
               )}
             </div>
+            {!result.Availability && (
+              <p className="text-red-600 text-sm mt-2">
+                This accommodation is currently unavailable for the selected dates. Please try different dates or contact the property directly.
+              </p>
+            )}
+            {result.Availability && result.Rate > 0 && (
+              <p className="text-green-600 text-sm mt-2">
+                Rates shown are for camping/farmhouse accommodations in the Gondwana Collection.
+              </p>
+            )}
           </div>
         </div>
 
