@@ -12,20 +12,9 @@ const Form = ({ onSubmit, loading, onReset }) => {
   const [errors, setErrors] = useState({})
   const [unitNames, setUnitNames] = useState([
     'Kalahari Farmhouse',
-    'Deluxe Suite', 
     'Standard Room',
-    'Family Room',
-    'Executive Suite',
-    'Presidential Suite',
-    'Safari Lodge',
-    'Desert Camp',
-    'Luxury Tent',
-    'Conference Room',
-    'Camping Site',
-    'Chalet',
-    'Villa',
-    'Cottage',
-    'Bungalow'
+    'Deluxe Suite',
+    'Executive Suite'
   ])
 
   // Optionally fetch unit names from API
@@ -184,7 +173,7 @@ const Form = ({ onSubmit, loading, onReset }) => {
             </datalist>
           </div>
           <div className="mt-1 text-xs text-gray-500">
-            💡 Start typing to see suggestions. Try "Kalahari Farmhouse" or "Standard Room"
+            💡 For testing: "Kalahari Farmhouse" (available) or "Standard Room" (unavailable)
           </div>
           {errors['Unit Name'] && (
             <p className="text-red-500 text-sm mt-1">{errors['Unit Name']}</p>

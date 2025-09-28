@@ -20,14 +20,15 @@ class RatesService
     public function __construct()
     {
         $this->httpClient = new Client();
+        // Gondwana Collection Remote API endpoint for rate queries
         $this->remoteApiUrl = $_ENV['REMOTE_API_URL'] ?? 'https://dev.gondwana-collection.com/Web-Store/Rates/Rates.php';
-        $this->timeout = (int)($_ENV['REMOTE_API_TIMEOUT'] ?? 30);
-        $this->adultAgeThreshold = (int)($_ENV['ADULT_AGE_THRESHOLD'] ?? 12);
-        
+        $this->timeout = (int) ($_ENV['REMOTE_API_TIMEOUT'] ?? 30);
+        $this->adultAgeThreshold = (int) ($_ENV['ADULT_AGE_THRESHOLD'] ?? 12);
+
         // Test Unit Type IDs for demonstration
         $this->testUnitTypeIds = [
-            (int)($_ENV['UNIT_TYPE_ID_1'] ?? -2147483637),
-            (int)($_ENV['UNIT_TYPE_ID_2'] ?? -2147483456)
+            (int) ($_ENV['UNIT_TYPE_ID_1'] ?? -2147483637),
+            (int) ($_ENV['UNIT_TYPE_ID_2'] ?? -2147483456)
         ];
     }
 
@@ -85,7 +86,7 @@ class RatesService
     private function transformAges(array $ages): array
     {
         $guests = [];
-        
+
         foreach ($ages as $age) {
             $ageGroup = $age >= $this->adultAgeThreshold ? 'Adult' : 'Child';
             $guests[] = ['Age Group' => $ageGroup];
@@ -105,7 +106,7 @@ class RatesService
         // Simple hash-based selection for consistent mapping
         $hash = crc32($unitName);
         $index = abs($hash) % count($this->testUnitTypeIds);
-        
+
         return $this->testUnitTypeIds[$index];
     }
 
@@ -141,7 +142,7 @@ class RatesService
         } catch (RequestException $e) {
             // Log the error (in production, use proper logging)
             error_log('Remote API call failed: ' . $e->getMessage());
-            
+
             // For demo purposes, return a mock response when remote API fails
             return $this->getMockResponse($payload);
         }
@@ -159,9 +160,9 @@ class RatesService
         $baseRate = 100;
         $unitTypeMultiplier = abs($payload['Unit Type ID']) % 1000 / 100;
         $guestCount = count($payload['Guests']);
-        
+
         $mockRate = $baseRate + ($unitTypeMultiplier * 50) + ($guestCount * 25);
-        
+
         return [
             'Rate' => $mockRate,
             'Availability' => true,
@@ -185,21 +186,21 @@ class RatesService
         // Gondwana API uses 'Total Charge' field and values are in cents, so divide by 100
         $totalCharge = $remoteResponse['Total Charge'] ?? 0;
         $rate = $totalCharge / 100; // Convert from cents to dollars
-        
+
         // Determine availability based on Gondwana API response patterns
         $availability = false;
-        
+
         // Primary indicator: Total charge > 0 means available
         if ($totalCharge > 0) {
             $availability = true;
         }
-        
+
         // Secondary check: Rooms available > 0 indicates availability
         $roomsAvailable = $remoteResponse['Rooms'] ?? 0;
         if ($roomsAvailable > 0) {
             $availability = true;
         }
-        
+
         // Tertiary check: Valid legs with charges
         if (isset($remoteResponse['Legs']) && !empty($remoteResponse['Legs'])) {
             foreach ($remoteResponse['Legs'] as $leg) {
@@ -210,12 +211,12 @@ class RatesService
                 }
             }
         }
-        
+
         // Final validation: If we calculated a rate > 0, it should be available
         if ($rate > 0) {
             $availability = true;
         }
-        
+
         // If no Total Charge but we have legs, sum up the leg charges
         if ($rate == 0 && isset($remoteResponse['Legs']) && is_array($remoteResponse['Legs'])) {
             $totalFromLegs = 0;
@@ -232,9 +233,9 @@ class RatesService
 
         return [
             'Unit Name' => $originalRequest['Unit Name'],
-            'Rate' => (float)$rate,
+            'Rate' => (float) $rate,
             'Date Range' => $dateRange,
-            'Availability' => (bool)$availability,
+            'Availability' => (bool) $availability,
             'Raw Response' => $remoteResponse
         ];
     }

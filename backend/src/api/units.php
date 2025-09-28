@@ -28,98 +28,40 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit();
 }
 
-// Predefined list of available unit names
-// In a real application, this could come from a database or external API
+// Testing unit names for demonstration purposes
+// These correspond to the Unit Type IDs [-2147483637, -2147483456] specified for testing
 $unitNames = [
+    [
+        'id' => 'kalahari-farmhouse',
+        'name' => 'Kalahari Farmhouse',
+        'description' => 'Available camping/farmhouse accommodation (Unit Type ID: -2147483637)',
+        'category' => 'Available',
+        'unitTypeId' => -2147483637,
+        'status' => 'Available for testing'
+    ],
     [
         'id' => 'standard-room',
         'name' => 'Standard Room',
-        'description' => 'Comfortable accommodation with basic amenities',
-        'category' => 'Standard'
+        'description' => 'Unavailable accommodation for testing (Unit Type ID: -2147483456)',
+        'category' => 'Unavailable',
+        'unitTypeId' => -2147483456,
+        'status' => 'Unavailable for testing'
     ],
     [
         'id' => 'deluxe-suite',
         'name' => 'Deluxe Suite',
-        'description' => 'Spacious suite with premium amenities',
-        'category' => 'Premium'
-    ],
-    [
-        'id' => 'family-room',
-        'name' => 'Family Room',
-        'description' => 'Large room suitable for families with children',
-        'category' => 'Family'
+        'description' => 'Available accommodation (maps to Unit Type ID: -2147483637)',
+        'category' => 'Available',
+        'unitTypeId' => -2147483637,
+        'status' => 'Available for testing'
     ],
     [
         'id' => 'executive-suite',
         'name' => 'Executive Suite',
-        'description' => 'Luxury suite with business amenities',
-        'category' => 'Luxury'
-    ],
-    [
-        'id' => 'presidential-suite',
-        'name' => 'Presidential Suite',
-        'description' => 'Top-tier luxury accommodation',
-        'category' => 'Luxury'
-    ],
-    [
-        'id' => 'kalahari-farmhouse',
-        'name' => 'Kalahari Farmhouse',
-        'description' => 'Traditional farmhouse experience',
-        'category' => 'Unique'
-    ],
-    [
-        'id' => 'safari-lodge',
-        'name' => 'Safari Lodge',
-        'description' => 'Authentic safari experience',
-        'category' => 'Adventure'
-    ],
-    [
-        'id' => 'desert-camp',
-        'name' => 'Desert Camp',
-        'description' => 'Desert camping experience',
-        'category' => 'Adventure'
-    ],
-    [
-        'id' => 'luxury-tent',
-        'name' => 'Luxury Tent',
-        'description' => 'Glamping with luxury amenities',
-        'category' => 'Unique'
-    ],
-    [
-        'id' => 'conference-room',
-        'name' => 'Conference Room',
-        'description' => 'Business meeting and conference facilities',
-        'category' => 'Business'
-    ],
-    [
-        'id' => 'camping-site',
-        'name' => 'Camping Site',
-        'description' => 'Basic camping facilities',
-        'category' => 'Budget'
-    ],
-    [
-        'id' => 'chalet',
-        'name' => 'Chalet',
-        'description' => 'Cozy mountain-style accommodation',
-        'category' => 'Standard'
-    ],
-    [
-        'id' => 'villa',
-        'name' => 'Villa',
-        'description' => 'Private villa with exclusive amenities',
-        'category' => 'Luxury'
-    ],
-    [
-        'id' => 'cottage',
-        'name' => 'Cottage',
-        'description' => 'Charming cottage accommodation',
-        'category' => 'Standard'
-    ],
-    [
-        'id' => 'bungalow',
-        'name' => 'Bungalow',
-        'description' => 'Standalone bungalow accommodation',
-        'category' => 'Premium'
+        'description' => 'Unavailable accommodation (maps to Unit Type ID: -2147483456)',
+        'category' => 'Unavailable',
+        'unitTypeId' => -2147483456,
+        'status' => 'Unavailable for testing'
     ]
 ];
 
