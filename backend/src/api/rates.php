@@ -14,9 +14,20 @@ header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-W
 header('Access-Control-Max-Age: 86400'); // Cache preflight for 24 hours
 header('Content-Type: application/json');
 
-// Enable error reporting for development (disable in production)
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // Don't display errors to avoid breaking JSON response
+// Security headers
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+
+// Security: Disable error reporting in production
+if (($_ENV['APP_ENV'] ?? 'production') === 'development') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 0); // Don't display errors to avoid breaking JSON response
+} else {
+    error_reporting(0);
+    ini_set('display_errors', 0);
+}
 
 // Load dependencies
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -51,6 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
+    // Security: Validate content length to prevent DoS attacks
+    $contentLength = $_SERVER['CONTENT_LENGTH'] ?? 0;
+    if ($contentLength > 1048576) { // 1MB limit
+        throw new InvalidArgumentException('Request body too large');
+    }
+    
     // Get and decode JSON input
     $rawInput = file_get_contents('php://input');
     
@@ -111,7 +128,11 @@ try {
             'details' => ['An unexpected error occurred. Please try again later.']
         ]);
         
-        // Log the actual error for debugging (don't expose to client)
-        error_log('Rates API Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+        // Security: Log errors without exposing sensitive information
+        $logMessage = 'Rates API Error: ' . $e->getMessage();
+        if (($_ENV['APP_ENV'] ?? 'production') === 'development') {
+            $logMessage .= ' in ' . $e->getFile() . ':' . $e->getLine();
+        }
+        error_log($logMessage);
     }
 }

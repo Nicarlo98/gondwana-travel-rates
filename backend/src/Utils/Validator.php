@@ -34,6 +34,10 @@ class Validator
         // Validate Unit Name
         if (!is_string($data['Unit Name']) || trim($data['Unit Name']) === '') {
             $errors[] = "Unit Name must be a non-empty string";
+        } elseif (strlen($data['Unit Name']) > 100) {
+            $errors[] = "Unit Name must be less than 100 characters";
+        } elseif (!preg_match('/^[a-zA-Z0-9\s\-_]+$/', $data['Unit Name'])) {
+            $errors[] = "Unit Name contains invalid characters";
         }
 
         // Validate date formats (dd/mm/yyyy)
@@ -58,6 +62,8 @@ class Validator
         // Validate Occupants
         if (!is_int($data['Occupants']) || $data['Occupants'] <= 0) {
             $errors[] = "Occupants must be a positive integer";
+        } elseif ($data['Occupants'] > 20) {
+            $errors[] = "Occupants cannot exceed 20";
         }
 
         // Validate Ages array
@@ -73,6 +79,8 @@ class Validator
             foreach ($data['Ages'] as $index => $age) {
                 if (!is_int($age) || $age <= 0) {
                     $errors[] = "Age at index {$index} must be a positive integer";
+                } elseif ($age > 150) {
+                    $errors[] = "Age at index {$index} cannot exceed 150 years";
                 }
             }
         }

@@ -14,8 +14,9 @@ frontend/dist/
 
 # Debug and Development Scripts
 debug-api.php
-test-api.ps1
+*.ps1
 restart-backend.ps1
+start-dev.bat
 
 # IDE files
 .vscode/
