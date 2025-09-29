@@ -11,6 +11,11 @@ use GuzzleHttp\Exception\RequestException;
  */
 class RatesService
 {
+    // Constants for repeated literals
+    private const DATE_FORMAT = 'd/m/Y';
+    private const UNIT_NAME_KEY = 'Unit Name';
+    private const TOTAL_CHARGE_KEY = 'Total Charge';
+    
     private Client $httpClient;
     private string $remoteApiUrl;
     private int $timeout;
@@ -60,8 +65,8 @@ class RatesService
     public function transformToRemoteFormat(array $inputData): array
     {
         // Convert dates from dd/mm/yyyy to yyyy-mm-dd
-        $arrivalDate = \DateTime::createFromFormat('d/m/Y', $inputData['Arrival']);
-        $departureDate = \DateTime::createFromFormat('d/m/Y', $inputData['Departure']);
+        $arrivalDate = \DateTime::createFromFormat(self::DATE_FORMAT, $inputData['Arrival']);
+        $departureDate = \DateTime::createFromFormat(self::DATE_FORMAT, $inputData['Departure']);
 
         // Map unit name to test Unit Type ID (alternating for demo)
         $unitTypeId = $this->getUnitTypeId($inputData['Unit Name']);
@@ -184,7 +189,7 @@ class RatesService
     {
         // Extract rate and availability from remote response
         // Gondwana API uses 'Total Charge' field and values are in cents, so divide by 100
-        $totalCharge = $remoteResponse['Total Charge'] ?? 0;
+        $totalCharge = $remoteResponse[self::TOTAL_CHARGE_KEY] ?? 0;
         $rate = $totalCharge / 100; // Convert from cents to dollars
 
         // Determine availability based on Gondwana API response patterns
@@ -204,7 +209,7 @@ class RatesService
         // Tertiary check: Valid legs with charges
         if (isset($remoteResponse['Legs']) && !empty($remoteResponse['Legs'])) {
             foreach ($remoteResponse['Legs'] as $leg) {
-                $legCharge = $leg['Total Charge'] ?? 0;
+                $legCharge = $leg[self::TOTAL_CHARGE_KEY] ?? 0;
                 if ($legCharge > 0) {
                     $availability = true;
                     break;
@@ -221,18 +226,18 @@ class RatesService
         if ($rate == 0 && isset($remoteResponse['Legs']) && is_array($remoteResponse['Legs'])) {
             $totalFromLegs = 0;
             foreach ($remoteResponse['Legs'] as $leg) {
-                $totalFromLegs += $leg['Total Charge'] ?? 0;
+                $totalFromLegs += $leg[self::TOTAL_CHARGE_KEY] ?? 0;
             }
             $rate = $totalFromLegs / 100; // Convert from cents to dollars
         }
 
         // Format date range
-        $arrivalDate = \DateTime::createFromFormat('d/m/Y', $originalRequest['Arrival']);
-        $departureDate = \DateTime::createFromFormat('d/m/Y', $originalRequest['Departure']);
+        $arrivalDate = \DateTime::createFromFormat(self::DATE_FORMAT, $originalRequest['Arrival']);
+        $departureDate = \DateTime::createFromFormat(self::DATE_FORMAT, $originalRequest['Departure']);
         $dateRange = $arrivalDate->format('Y-m-d') . ' to ' . $departureDate->format('Y-m-d');
 
         return [
-            'Unit Name' => $originalRequest['Unit Name'],
+            self::UNIT_NAME_KEY => $originalRequest[self::UNIT_NAME_KEY],
             'Rate' => (float) $rate,
             'Date Range' => $dateRange,
             'Availability' => (bool) $availability,
