@@ -12,6 +12,9 @@ frontend/package-lock.json
 # Build Outputs
 frontend/dist/
 
+# Coverage Reports
+backend/coverage/
+
 # Debug and Development Scripts
 debug-api.php
 *.ps1

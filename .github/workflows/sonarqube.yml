@@ -1,0 +1,55 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring, xdebug
+        coverage: xdebug
+    
+    - name: Install PHP Dependencies
+      working-directory: backend
+      run: composer install --no-progress --no-interaction
+    
+    - name: Run PHP Tests with Coverage
+      working-directory: backend
+      run: |
+        mkdir -p coverage
+        vendor/bin/phpunit --coverage-clover coverage/clover.xml --coverage-text
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: Install Frontend Dependencies
+      working-directory: frontend
+      run: npm ci
+    
+    - name: Run Frontend Tests
+      working-directory: frontend
+      run: npm test -- --coverage --watchAll=false
+    
+    - name: SonarQube Scan
+      uses: sonarqube-quality-gate-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: https://sonarcloud.io

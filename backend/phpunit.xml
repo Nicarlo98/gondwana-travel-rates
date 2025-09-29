@@ -13,5 +13,15 @@
         <include>
             <directory>src</directory>
         </include>
+        <exclude>
+            <directory>src/api</directory>
+        </exclude>
     </source>
+    <coverage>
+        <report>
+            <clover outputFile="coverage/clover.xml"/>
+            <html outputDirectory="coverage/html"/>
+            <text outputFile="coverage/coverage.txt"/>
+        </report>
+    </coverage>
 </phpunit>
