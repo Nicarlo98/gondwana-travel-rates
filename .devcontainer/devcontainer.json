@@ -1,35 +1,43 @@
 {
   "name": "Gondwana Travel Rates",
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "image": "mcr.microsoft.com/devcontainers/php:1-8.2-bullseye",
   "features": {
-    "ghcr.io/devcontainers/features/php:1": {
-      "version": "8.2",
-      "installComposer": true
-    },
     "ghcr.io/devcontainers/features/node:1": {
       "version": "18"
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true
     }
   },
   "forwardPorts": [3000, 8000],
   "portsAttributes": {
     "3000": {
-      "label": "Frontend (Vite)",
+      "label": "Frontend (Vite React)",
       "onAutoForward": "openBrowser"
     },
     "8000": {
-      "label": "Backend (PHP)",
+      "label": "Backend (PHP API)",
       "onAutoForward": "openBrowser"
     }
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postStartCommand": "echo '🚀 Ready! Run: ./codespace-start.sh'",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-vscode.vscode-json",
         "bradlc.vscode-tailwindcss",
         "esbenp.prettier-vscode",
-        "ms-vscode.vscode-typescript-next"
-      ]
+        "ms-vscode.vscode-typescript-next",
+        "bmewburn.vscode-intelephense-client",
+        "xdebug.php-debug"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      }
     }
-  }
+  },
+  "remoteUser": "vscode"
 }
