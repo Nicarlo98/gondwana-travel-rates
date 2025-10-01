@@ -44,7 +44,14 @@ rates-api-assessment/
 
 ## 🚀 Quick Start
 
-### Local Development
+### Option 1: GitHub Codespaces (Recommended)
+1. Click the green "Code" button on GitHub
+2. Select "Codespaces" → "Create codespace on main"
+3. Wait for automatic setup (2-3 minutes)
+4. Run: `./codespace-start.sh`
+5. Access via the forwarded ports (3000 for frontend, 8000 for backend)
+
+### Option 2: Local Development
 
 1. **Clone the repository**
 
