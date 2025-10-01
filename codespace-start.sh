@@ -50,8 +50,8 @@ if ! php -v > /dev/null 2>&1; then
     exit 1
 fi
 
-# Start PHP server
-nohup php -S 0.0.0.0:8000 > ../backend.log 2>&1 &
+# Start PHP server with correct document root
+nohup php -S 0.0.0.0:8000 -t . > ../backend.log 2>&1 &
 BACKEND_PID=$!
 echo "✅ Backend started (PID: $BACKEND_PID)"
 cd ..
@@ -60,8 +60,10 @@ cd ..
 sleep 3
 
 # Test backend
-if curl -s http://localhost:8000/api/test.php > /dev/null; then
+if curl -s http://localhost:8000/health.php > /dev/null; then
     echo "✅ Backend is responding"
+elif curl -s http://localhost:8000/src/api/test.php > /dev/null; then
+    echo "✅ Backend API is responding"
 else
     echo "⚠️  Backend might not be ready yet"
 fi
@@ -93,7 +95,8 @@ echo "   Frontend: https://$CODESPACE_NAME-3000.app.github.dev"
 echo "   Backend:  https://$CODESPACE_NAME-8000.app.github.dev"
 echo ""
 echo "🔍 Test the API:"
-echo "   curl https://$CODESPACE_NAME-8000.app.github.dev/api/test.php"
+echo "   curl https://$CODESPACE_NAME-8000.app.github.dev/health.php"
+echo "   curl https://$CODESPACE_NAME-8000.app.github.dev/src/api/test.php"
 echo ""
 echo "📋 Process IDs:"
 echo "   Backend PHP: $BACKEND_PID"

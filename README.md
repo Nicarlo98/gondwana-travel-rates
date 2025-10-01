@@ -47,21 +47,25 @@ rates-api-assessment/
 ### Option 1: GitHub Codespaces (Recommended) ⭐
 
 1. **Open in Codespaces**:
+
    - Click the green "Code" button on GitHub
    - Select "Codespaces" → "Create codespace on main"
    - Wait for automatic setup (3-5 minutes)
 
 2. **Verify Setup** (optional):
+
    ```bash
    bash .devcontainer/verify-setup.sh
    ```
 
 3. **Start Application**:
+
    ```bash
    ./codespace-start.sh
    ```
 
 4. **Access Your App**:
+
    - VS Code will show popups to open ports 3000 and 8000
    - Frontend: React app with Tailwind UI
    - Backend: PHP API with currency conversion
